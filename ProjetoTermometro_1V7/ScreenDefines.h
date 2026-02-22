@@ -9,14 +9,14 @@
 #define hourX_1 17
 #define hourY_1 2
 
-#define separator_HM_X 37
+#define separator_HM_X 34
 #define separator_HM_Y 2
 #define separator_HM 10 //":" bitmap
 
-#define minuteX_0 44
+#define minuteX_0 39
 #define minuteY_0 2
 
-#define minuteX_1 61
+#define minuteX_1 56
 #define minuteY_1 2
 
 #define separator_MS_X 13*6

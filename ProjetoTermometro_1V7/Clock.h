@@ -7,12 +7,12 @@ private:
 
   char second[3] = "00";
   char day[3] = "00";
-  char week[4] = "DOM";
-  char month[4] = "JAN";
+  char week[4] = "poo";
+  char month[4] = "poo";
   char year[5] = "1970";
 
-  const char* dayOfTheWeek[7] = { "DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB" };
-  const char* monthOfTheYear[12] = { "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ" };
+  const char* dayOfTheWeek[8] = { "DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB", "poo" };
+  const char* monthOfTheYear[13] = { "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ", "poo" };
   DateTime dateTime;  // DateTime object to store the current time
   DateTime prevDT;
 
@@ -54,12 +54,12 @@ public:
     uint8_t month = this->dateTime.month();
     int16_t year = this->dateTime.year();
 
-    second = second + ((second == 0) ? +1 : -1);
+    /*second = second + ((second == 0) ? +1 : -1);
     minute = minute + ((minute == 0) ? +1 : -1);
     hour = hour + ((hour == 0) ? +1 : -1);
     day = day + ((day == 1) ? +1 : -1);
     month = month + ((month == 1) ? +1 : -1);
-    year = year + ((year == 0) ? +1 : -1);
+    year = year + ((year == 0) ? +1 : -1);*/
 
     // Now construct a new DateTime (RTClib-style)
     this->prevDT = DateTime(year, month, day, hour, minute, second);
@@ -114,7 +114,7 @@ public:
       this->myScreen->drawWeek(this->week);
     }
     if (this->prevDT.month() != this->dateTime.month()) {
-      strcpy(this->month, monthOfTheYear[this->dateTime.month() - 1]);
+      strcpy(this->month, monthOfTheYear[this->dateTime.month() - 1                                              ]);
       this->myScreen->drawMonth(this->month);
     }
     add0toString(this->dateTime.second(), this->second);

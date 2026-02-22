@@ -20,13 +20,13 @@ PCF8814 display;  // Bitbang SPI
 Screen screen(display);
 
 // Create the Thermometer object
-Thermometer myThermometer(screen, -34.06, 0.1111, A0);
+Thermometer myThermometer(screen, /*-36.26*/-33.56, 0.1111, A0, 5);
 
 // Create Clock object
 Clock myClock(screen);
 
 // Battery voltage reading
-Battery battery(screen);
+Battery battery;
 
 // Global flags for interrupt
 volatile bool updateFlag = false;
@@ -36,6 +36,7 @@ unsigned long lastHistoryUpdate = 0;
 
 void setup() {
   Serial.begin(19200);
+  battery.begin();
   pinMode(LED_BUILTIN, OUTPUT);
   display.begin();
   display.lcd_contrast(0);  // Contrast to minimum
@@ -51,8 +52,8 @@ void setup() {
   // Set up the SQW/OUT pin to output a 1Hz square wave
   myRtc.writeSqwPinMode(DS1307_SquareWave1HZ);
   Serial.println(F("RTC SET TO SQW 1HZ"));
-  
-  delay(3000);//needed to stabalize the ADC
+
+  delay(3000);  //needed to stabalize the ADC
 
   // Initialize the thermometer
   myThermometer.updateTemp();
@@ -61,18 +62,17 @@ void setup() {
 
   // Set up the interrupt pin
   pinMode(INTERRUPT_PIN, INPUT_PULLUP);
-  myClock.begin(DateTime(1970, 1, 1, 0, 0, 0));
+  myClock.begin(DateTime(1970, 1, 1, 60, 0, 0));
   // Attach interrupt to falling edge
   attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), interruptHandler, FALLING);
   display.clear();
-  screen.drawBackground(); 
-  battery.begin(); 
+  screen.drawBackground();
   myThermometer.render();
-  beep.alarm_3();
+  beep.shortBeep();
 }
 
 void loop() {
-  if (battery.getBatteryPercentage() <= 14) {
+  if (battery.getBatteryPercentage() <= 19) {
     display.clear();
     display.setCursor(0, 0);
     display.print(F("LOW BAT"));
@@ -82,6 +82,19 @@ void loop() {
     goToPermanentSleep();
   }
   if (updateFlag) {
+
+    //debug
+    //uint16_t vcc = battery.getVcc();
+    //Serial.print(F("Vcc in mV: "));
+    //Serial.println(vcc);
+    //Serial.print("DATA: ");
+    //Serial.print(myClock.getDay());
+    //Serial.print("/");
+    //Serial.print(myClock.getMonth());
+    //Serial.print("/");
+    //Serial.println(myClock.getYear());
+    
+
 
     DateTime now = myRtc.now();
 
@@ -93,13 +106,18 @@ void loop() {
 
     myClock.render();
     myThermometer.render();
-    battery.render();
-
-
-    if (!now.minute() && !now.second()) {//every hour
-      myThermometer.updateTempHistory(now);
-      //beep.alarm_1();//uncomment to enable beep every hour
+    screen.drawBatSimble(battery.getUsableBatteryPercentage());
+    //myThermometer.updateTempHistory(now);
+    if (!now.minute() && !now.second()) {  //every hour
+      //myThermometer.updateTempHistory(now);
+      beep.shortBeep();
     }
+
+    if (!now.minute()) {  //every minute
+      myThermometer.updateTempHistory(now);
+      //beep.shortBeep();
+    }
+    
 
     // Set updateFlag to false, so we wait again for the next interrupt
     updateFlag = false;
@@ -235,4 +253,3 @@ void checkAndAdjustRTC() {
 
   Serial.println(F("Too many failed attempts. Aborting time adjustment."));
 }
-

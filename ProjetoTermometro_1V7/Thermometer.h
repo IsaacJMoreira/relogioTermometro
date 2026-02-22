@@ -18,6 +18,7 @@ private:
   float tempOffset;
   float tempCoefficient;
   int analogSource;
+  int onPin;
 
   logEntry tempHistory[TEMP_HISTORY_SIZE];
   uint8_t tempHistoryPointer = 0;
@@ -29,20 +30,25 @@ private:
 
 
 public:
-  explicit Thermometer(Screen &screen, float tempOffset, float tempCoefficient, int analogSource)
+  explicit Thermometer(Screen &screen, float tempOffset, float tempCoefficient, int analogSource, int onPin)
     : myScreen(&screen),
       tempOffset(tempOffset),
       tempCoefficient(tempCoefficient),
-      analogSource(analogSource) {
+      analogSource(analogSource),
+      onPin(onPin) {
+        pinMode(this->onPin, OUTPUT);
+        digitalWrite(this->onPin, LOW);
   }
 
   void updateTemp() {
     this->prevTemp = this->temp;
     long temp = 0;
+    digitalWrite(this->onPin, HIGH);
     for (uint16_t i = 0; i < 1000; i++) {
       temp += analogRead(this->analogSource);  // 0 - 1023
     }
     this->temp = (temp / 1000) * this->tempCoefficient + this->tempOffset;
+    digitalWrite(this->onPin, LOW);
     saveMinMax();  //also finds and saves min and max temp
   }
 

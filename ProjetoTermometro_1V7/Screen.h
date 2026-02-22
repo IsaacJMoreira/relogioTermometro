@@ -9,21 +9,21 @@ static const byte degrees_glyph[] = { 0x00, 0x07, 0x05, 0x07, 0x00 };
 static const byte DOWN_CHAR = 2;
 
 static const byte down_glyph[] = {
-  B00100000,  // 0x00
-  B01100000,  // 0x07
-  B11111111,  // 0x05
-  B01100000,  // 0x07
-  B00100000   // 0x00
+  B00000000, // 0x00
+  B00100000, // 0x07
+  B01111111, // 0x05
+  B00100000, // 0x07
+  B00000000  // 0x00
 };
 
 static const byte UP_CHAR = 3;
 
 static const byte up_glyph[] = {
-  B00000100,  // 0x00
-  B00000110,  // 0x07
-  B11111111,  // 0x05
-  B00000110,  // 0x07
-  B00000100   // 0x00
+  B00000000, // 0x00
+  B00000010, // 0x07
+  B01111111, // 0x05
+  B00000010, // 0x07
+  B00000000  // 0x00
 };
 
 
@@ -51,11 +51,6 @@ private:
     digit_separator
   };
 
-  uint8_t prevH_0 = 255;
-  uint8_t prevH_1 = 255;
-  uint8_t prevM_0 = 255;
-  uint8_t prevM_1 = 255;
-
 public:
   Screen(PCF8814& myDisplay)
     : display(&myDisplay) {
@@ -68,34 +63,22 @@ public:
 
   void drawHour(uint8_t H_0, uint8_t H_1) {
     uint8_t buffer[48];
-    if (prevH_0 != H_0) {
-      this->display->setCursor(hourX_0, hourY_0);
-      memcpy_P(buffer, this->simbles[H_0], 48);
-      this->display->drawBitmap(buffer, 16, 3);
-    }
-    if (prevH_1 != H_1) {
-      this->display->setCursor(hourX_1, hourY_1);
-      memcpy_P(buffer, this->simbles[H_1], 48);
-      this->display->drawBitmap(buffer, 16, 3);
-    }
-    this->prevH_0 = H_0;
-    this->prevH_1 = H_1;
+    this->display->setCursor(hourX_0, hourY_0);
+    memcpy_P(buffer, this->simbles[H_0], 48);
+    this->display->drawBitmap(buffer, 16, 3);
+    this->display->setCursor(hourX_1, hourY_1);
+    memcpy_P(buffer, this->simbles[H_1], 48);
+    this->display->drawBitmap(buffer, 16, 3);
   }
 
   void drawMinute(uint8_t M_0, uint8_t M_1) {
     uint8_t buffer[48];
-    if (prevM_0 != M_0) {
-      this->display->setCursor(minuteX_0, minuteY_0);
-      memcpy_P(buffer, this->simbles[M_0], 48);
-      this->display->drawBitmap(buffer, 16, 3);
-    }
-    if (prevM_1 != M_1) {
-      this->display->setCursor(minuteX_1, minuteY_1);
-      memcpy_P(buffer, this->simbles[M_1], 48);
-      this->display->drawBitmap(buffer, 16, 3);
-    }
-    this->prevM_0 = M_0;
-    this->prevM_1 = M_1;
+    this->display->setCursor(minuteX_0, minuteY_0);
+    memcpy_P(buffer, this->simbles[M_0], 48);
+    this->display->drawBitmap(buffer, 16, 3);
+    this->display->setCursor(minuteX_1, minuteY_1);
+    memcpy_P(buffer, this->simbles[M_1], 48);
+    this->display->drawBitmap(buffer, 16, 3);
   }
 
   void drawSecond(const char* string) {
@@ -139,12 +122,12 @@ public:
     this->display->print(temp, 1);
   }
 
-  void drawMin(float min) {
+  void drawMin(float min){
     this->display->setCursor(minTempX, minTempY);
     this->display->print(min, 1);
   }
 
-  void drawMax(float max) {
+    void drawMax(float max){
     this->display->setCursor(maxTempX, maxTempY);
     this->display->print(max, 1);
   }
@@ -219,7 +202,7 @@ public:
     this->display->setCursor(tempTextX, tempTextY);
     this->display->print(F("Temp:"));
     this->display->createChar(DEGREES_CHAR, degrees_glyph);
-    this->display->setCursor(tempGliphX, tempGliphY);
+    this->display->setCursor(tempGliphX , tempGliphY);
     this->display->print("\001C");
     this->display->createChar(UP_CHAR, up_glyph);
     this->display->setCursor(maxGliphX, maxGliphY);
