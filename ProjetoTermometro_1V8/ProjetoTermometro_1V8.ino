@@ -21,7 +21,7 @@ PCF8814 display;  // Bitbang SPI
 Screen screen(display);
 
 // Create the Thermometer object
-Thermometer myThermometer(screen, /*-36.26*/-33.56, 0.1111, A0, 5);
+Thermometer myThermometer(screen, -36.26/*-33.56*/, 0.1111, A0, 5);
 
 // Create Clock object
 Clock myClock(screen);
@@ -36,7 +36,7 @@ unsigned long lastTempUpdate = 0;
 unsigned long lastHistoryUpdate = 0;
 
 void setup() {
-  Serial.begin(19200);
+  Serial.begin(4800);
   battery.begin();
   pinMode(LED_BUILTIN, OUTPUT);
   display.begin();
@@ -83,7 +83,7 @@ void loop() {
     goToPermanentSleep();
   }
   if (updateFlag) {
-
+   
     //debug
     //uint16_t vcc = battery.getVcc();
     //Serial.print(F("Vcc in mV: "));
@@ -101,7 +101,7 @@ void loop() {
 
     myClock.setDateTime(now);
 
-    myThermometer.updateTemp();
+    //myThermometer.updateTemp();
 
     screen.drawTemp(myThermometer.getTemp());
 
@@ -114,9 +114,10 @@ void loop() {
       beep.shortBeep();
     }
 
-    if (!now.minute()) {  //every minute
+    if (!now.second()) {  //every minute
+      myThermometer.updateTemp();
       myThermometer.updateTempHistory(now);
-      //beep.shortBeep();
+      //beep.alarm_3();
     }
     
 
