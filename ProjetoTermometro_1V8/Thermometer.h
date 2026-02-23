@@ -44,10 +44,10 @@ public:
     this->prevTemp = this->temp;
     long temp = 0;
     digitalWrite(this->onPin, HIGH);
-    for (uint16_t i = 0; i < 1000; i++) {
+    for (uint16_t i = 0; i < 16; i++) {
       temp += analogRead(this->analogSource);  // 0 - 1023
     }
-    this->temp = (temp / 1000) * this->tempCoefficient + this->tempOffset;
+    this->temp = (temp / 16) * this->tempCoefficient + this->tempOffset;
     digitalWrite(this->onPin, LOW);
     saveMinMax();  //also finds and saves min and max temp
   }
