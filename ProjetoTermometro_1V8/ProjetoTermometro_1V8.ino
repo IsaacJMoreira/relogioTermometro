@@ -21,7 +21,7 @@ PCF8814 display;  // Bitbang SPI
 Screen screen(display);
 
 // Create the Thermometer object
-Thermometer myThermometer(screen, -36.26/*-33.56*/, 0.1111, A0, 5);
+Thermometer myThermometer(screen, /*-36.26*/-33.06, 0.1111, A0, 5);
 
 // Create Clock object
 Clock myClock(screen);
